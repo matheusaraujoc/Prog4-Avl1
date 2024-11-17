@@ -59,8 +59,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   initialValue: name,
                   decoration: InputDecoration(
                     labelText: 'Nome da Categoria',
+                    labelStyle: TextStyle(
+                        color:
+                            Colors.lightBlueAccent), // Cor do texto do rótulo
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.lightBlueAccent, // Azul claro para borda
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color:
+                            Colors.lightBlueAccent, // Azul claro quando focado
+                      ),
                     ),
                   ),
                   validator: (value) =>
@@ -97,9 +110,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue,
+                      backgroundColor:
+                          Colors.lightBlueAccent, // Azul claro para o botão
                     ),
-                    child: const Text('Salvar'),
+                    child: const Text(
+                      'Salvar',
+                      style: TextStyle(color: Colors.white), // Texto em branco
+                    ),
                   ),
                 ],
               ),
@@ -177,7 +194,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCategoryModal(),
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: Colors.lightBlueAccent, // Azul claro para o FAB
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -70,179 +71,208 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false, // Evita que o layout mude com o teclado
-      appBar: AppBar(
-        title: const Text(
-          'To-Do List',
-          style: TextStyle(color: Colors.white),
+    return MaterialApp(
+      title: 'To-Do List',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.lightBlueAccent, // Azul claro
+          ),
         ),
-        backgroundColor: Colors.lightBlue,
-        actions: [
-          FutureBuilder<List<Category>>(
-            future: categories,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox.shrink();
-              } else if (snapshot.hasError || !snapshot.hasData) {
-                return const SizedBox.shrink();
-              } else {
-                final categoryList = snapshot.data!;
-                return PopupMenuButton<String>(
-                  icon: const Icon(Icons.filter_list, color: Colors.white),
-                  onSelected: (category) {
-                    setState(() {
-                      selectedCategory = category == "Todas" ? null : category;
-                    });
-                  },
-                  itemBuilder: (context) {
-                    List<PopupMenuEntry<String>> menuItems = [
-                      const PopupMenuItem(
-                        value: "Todas",
-                        child: Text("Todas"),
-                      ),
-                    ];
-                    menuItems.addAll(categoryList.map((category) {
-                      return PopupMenuItem(
-                        value: category.name,
-                        child: Text(category.name),
-                      );
-                    }).toList());
-                    return menuItems;
-                  },
-                );
-              }
-            },
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStateProperty.all(
+              Colors.lightBlueAccent), // Azul claro para checkboxes
+          side: const BorderSide(color: Colors.white, width: 2), // Borda branca
+        ),
+        dialogTheme: DialogTheme(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-          // Adicionando o botão de navegação para a tela de categorias
-          IconButton(
-            icon: const Icon(Icons.category, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CategoryScreen()),
-              );
-            },
-          ),
-        ],
+        ),
       ),
-      body: FutureBuilder<List<Task>>(
-        future: tasks,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text(
-                'Erro ao carregar tarefas.',
-                style: TextStyle(color: Colors.red),
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'Nenhuma tarefa disponível.',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            );
-          } else {
-            final filteredTasks = snapshot.data!.where((task) {
-              return selectedCategory == null ||
-                  task.category == selectedCategory;
-            }).toList();
-            return ListView.builder(
-  padding: const EdgeInsets.all(8),
-  itemCount: filteredTasks.length,
-  itemBuilder: (context, index) {
-    final task = filteredTasks[index];
-    final isDueSoon =
-        task.dueDate.difference(DateTime.now()).inDays <= 1;
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(12),
-        title: Text(
-          task.title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isDueSoon ? Colors.red : Colors.black,
-            decoration:
-                task.isCompleted ? TextDecoration.lineThrough : null,  // Risca o texto se a tarefa for concluída
+      home: Scaffold(
+        resizeToAvoidBottomInset:
+            false, // Evita que o layout mude com o teclado
+        appBar: AppBar(
+          title: const Text(
+            'To-Do List',
+            style: TextStyle(color: Colors.white),
           ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text(
-              task.description.isNotEmpty
-                  ? task.description
-                  : 'Sem descrição',
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.calendar_today,
-                    size: 16, color: Colors.lightBlue),
-                const SizedBox(width: 4),
-                Text(
-                  "${task.dueDate.toLocal()}".split(' ')[0],
-                  style: const TextStyle(color: Colors.black),
-                ),
-                const SizedBox(width: 16),
-                const Icon(Icons.access_time,
-                    size: 16, color: Colors.lightBlue),
-                const SizedBox(width: 4),
-                Text(
-                  "${task.dueDate.hour.toString().padLeft(2, '0')}:${task.dueDate.minute.toString().padLeft(2, '0')}",
-                  style: const TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Checkbox para marcar a tarefa como concluída
-            Checkbox(
-              value: task.isCompleted,
-              onChanged: (bool? value) async {
-                setState(() {
-                  task.isCompleted = value ?? false;  // Atualiza o estado da tarefa
-                });
-                await firebaseService.updateTask(task);  // Atualiza a tarefa no Firebase
+          backgroundColor: Colors.lightBlue,
+          actions: [
+            FutureBuilder<List<Category>>(
+              future: categories,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                } else if (snapshot.hasError || !snapshot.hasData) {
+                  return const SizedBox.shrink();
+                } else {
+                  final categoryList = snapshot.data!;
+                  return PopupMenuButton<String>(
+                    icon: const Icon(Icons.filter_list, color: Colors.white),
+                    onSelected: (category) {
+                      setState(() {
+                        selectedCategory =
+                            category == "Todas" ? null : category;
+                      });
+                    },
+                    itemBuilder: (context) {
+                      List<PopupMenuEntry<String>> menuItems = [
+                        const PopupMenuItem(
+                          value: "Todas",
+                          child: Text("Todas"),
+                        ),
+                      ];
+                      menuItems.addAll(categoryList.map((category) {
+                        return PopupMenuItem(
+                          value: category.name,
+                          child: Text(category.name),
+                        );
+                      }).toList());
+                      return menuItems;
+                    },
+                  );
+                }
               },
             ),
-            // Ícone de excluir
             IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () async {
-                await firebaseService.deleteTask(task.id);
-                fetchTasks();
+              icon: const Icon(Icons.category, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CategoryScreen()),
+                );
               },
             ),
           ],
         ),
-        onTap: () => _openTaskForm(task: task),
-      ),
-    );
-  },
-);
+        body: FutureBuilder<List<Task>>(
+          future: tasks,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.lightBlueAccent), // Definindo a cor azul claro
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text(
+                  'Erro ao carregar tarefas.',
+                  style: TextStyle(color: Colors.red),
+                ),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  'Nenhuma tarefa disponível.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              );
+            } else {
+              final filteredTasks = snapshot.data!.where((task) {
+                return selectedCategory == null ||
+                    task.category == selectedCategory;
+              }).toList();
+              return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: filteredTasks.length,
+                itemBuilder: (context, index) {
+                  final task = filteredTasks[index];
+                  final isDueSoon =
+                      task.dueDate.difference(DateTime.now()).inDays <= 1;
 
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openTaskForm(),
-        backgroundColor: Colors.lightBlue,
-        child: const Icon(Icons.add, color: Colors.white),
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      title: Text(
+                        task.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDueSoon ? Colors.red : Colors.black,
+                          decoration: task.isCompleted
+                              ? TextDecoration.lineThrough
+                              : null, // Risca o texto se a tarefa for concluída
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(
+                            task.description.isNotEmpty
+                                ? task.description
+                                : 'Sem descrição',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.calendar_today,
+                                  size: 16, color: Colors.lightBlue),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${task.dueDate.toLocal()}".split(' ')[0],
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                              const SizedBox(width: 16),
+                              const Icon(Icons.access_time,
+                                  size: 16, color: Colors.lightBlue),
+                              const SizedBox(width: 4),
+                              Text(
+                                "${task.dueDate.hour.toString().padLeft(2, '0')}:${task.dueDate.minute.toString().padLeft(2, '0')}",
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: task.isCompleted,
+                            activeColor: Colors.lightBlueAccent, // Azul claro
+                            onChanged: (bool? value) async {
+                              setState(() {
+                                task.isCompleted = value ?? false;
+                              });
+                              await firebaseService.updateTask(task);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              await firebaseService.deleteTask(task.id);
+                              fetchTasks();
+                            },
+                          ),
+                        ],
+                      ),
+                      onTap: () => _openTaskForm(task: task),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => _openTaskForm(),
+          backgroundColor: Colors.lightBlue,
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
     );
   }
