@@ -39,17 +39,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openTaskForm({Task? task}) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return TaskForm(
-          task: task,
-          onSave: fetchTasks,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          insetPadding: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: TaskForm(
+                task: task,
+                onSave: fetchTasks,
+              ),
+            ),
+          ),
         );
       },
     );
@@ -58,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Evita que o layout mude com o teclado
       appBar: AppBar(
         title: const Text(
           'To-Do List',
