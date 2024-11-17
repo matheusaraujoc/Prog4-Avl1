@@ -43,7 +43,7 @@ class _TaskFormState extends State<TaskForm> {
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: Colors.lightBlue,
               onPrimary: Colors.white,
               onSurface: Colors.lightBlueAccent,
@@ -66,7 +66,7 @@ class _TaskFormState extends State<TaskForm> {
         builder: (context, child) {
           return Theme(
             data: ThemeData.light().copyWith(
-              colorScheme: ColorScheme.light(
+              colorScheme: const ColorScheme.light(
                 primary: Colors.lightBlue,
                 onPrimary: Colors.white,
                 onSurface: Colors.lightBlueAccent,
@@ -109,7 +109,7 @@ class _TaskFormState extends State<TaskForm> {
             children: [
               TextFormField(
                 initialValue: title,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Título',
                   labelStyle: TextStyle(color: Colors.lightBlue),
                   enabledBorder: OutlineInputBorder(
@@ -124,7 +124,7 @@ class _TaskFormState extends State<TaskForm> {
               const SizedBox(height: 16),
               TextFormField(
                 initialValue: description,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Descrição',
                   labelStyle: TextStyle(color: Colors.lightBlue),
                   enabledBorder: OutlineInputBorder(
@@ -160,7 +160,7 @@ class _TaskFormState extends State<TaskForm> {
                       onChanged: (value) => setState(() {
                         selectedCategory = value;
                       }),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Categoria',
                         labelStyle: TextStyle(color: Colors.lightBlue),
                         enabledBorder: OutlineInputBorder(
@@ -182,11 +182,11 @@ class _TaskFormState extends State<TaskForm> {
                     decoration: InputDecoration(
                       labelText: 'Data de Vencimento',
                       hintText: "${dueDate.toLocal()}".split(' ')[0],
-                      labelStyle: TextStyle(color: Colors.lightBlue),
-                      enabledBorder: OutlineInputBorder(
+                      labelStyle: const TextStyle(color: Colors.lightBlue),
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.lightBlue),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.lightBlueAccent),
                       ),
                     ),
@@ -231,4 +231,37 @@ class _TaskFormState extends State<TaskForm> {
       ),
     );
   }
+}
+
+void showTaskFormDialog(
+    BuildContext context, Task? existingTask, VoidCallback onSaveCallback) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).viewInsets.top > 0 ? 50 : 0,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: TaskForm(
+                task: existingTask,
+                onSave: onSaveCallback,
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
