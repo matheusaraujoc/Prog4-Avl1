@@ -5,7 +5,6 @@ import '../screens/home.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Verifica se é a primeira vez que o app é aberto
   final prefs = await SharedPreferences.getInstance();
   final bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
 
@@ -38,8 +37,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
         progressIndicatorTheme: const ProgressIndicatorThemeData(
-          color: Colors
-              .lightBlueAccent, // Cor azul claro para o indicador de progresso
+          color: Colors.lightBlueAccent,
+        ),
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Colors.lightBlueAccent,
+          selectionColor: Colors.lightBlueAccent,
+          selectionHandleColor: Colors.lightBlueAccent,
         ),
       ),
       home: isFirstTime ? const WelcomeScreen() : const HomeScreen(),
@@ -90,7 +93,7 @@ class WelcomeScreen extends StatelessWidget {
                 }
               },
               style: ElevatedButton.styleFrom(
-                fixedSize: const Size(180, 50), // Tamanho fixo do botão
+                fixedSize: const Size(180, 50),
                 backgroundColor: Colors.lightBlueAccent,
                 textStyle: const TextStyle(
                   fontSize: 18,

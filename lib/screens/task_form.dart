@@ -8,9 +8,10 @@ class TaskForm extends StatefulWidget {
   final Task? task;
   final VoidCallback onSave;
 
-  const TaskForm({this.task, required this.onSave});
+  const TaskForm({super.key, this.task, required this.onSave});
 
   @override
+  // ignore: library_private_types_in_public_api
   _TaskFormState createState() => _TaskFormState();
 }
 
@@ -61,6 +62,7 @@ class _TaskFormState extends State<TaskForm> {
 
     if (selectedDate != null && selectedDate != dueDate) {
       final TimeOfDay? selectedTime = await showTimePicker(
+        // ignore: use_build_context_synchronously
         context: context,
         initialTime: TimeOfDay.fromDateTime(dueDate),
         builder: (context, child) {
@@ -215,6 +217,7 @@ class _TaskFormState extends State<TaskForm> {
                         await _firebaseService.updateTask(task);
                       }
                       widget.onSave();
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context);
                     }
                   },

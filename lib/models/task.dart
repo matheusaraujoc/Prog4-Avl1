@@ -4,7 +4,7 @@ class Task {
   String description;
   DateTime dueDate;
   String category;
-  bool isCompleted;  // Novo campo
+  bool isCompleted;
 
   Task({
     required this.id,
@@ -12,7 +12,7 @@ class Task {
     required this.description,
     required this.dueDate,
     required this.category,
-    this.isCompleted = false,  // Inicializa como false
+    this.isCompleted = false,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class Task {
       description: json['description'],
       dueDate: DateTime.parse(json['dueDate']),
       category: json['category'],
-      isCompleted: json['isCompleted'] ?? false,  // Lê o campo isCompleted
+      isCompleted: json['isCompleted'] ?? false,
     );
   }
 
@@ -33,7 +33,7 @@ class Task {
       'description': description,
       'dueDate': dueDate.toIso8601String(),
       'category': category,
-      'isCompleted': isCompleted,  // Adiciona o campo isCompleted
+      'isCompleted': isCompleted,
     };
   }
 }

@@ -6,6 +6,7 @@ class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CategoryScreenState createState() => _CategoryScreenState();
 }
 
@@ -26,7 +27,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _showCategoryModal({Category? category}) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     String name = category?.name ?? '';
 
     showModalBottomSheet(
@@ -54,25 +55,22 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
               const SizedBox(height: 16),
               Form(
-                key: _formKey,
+                key: formKey,
                 child: TextFormField(
                   initialValue: name,
                   decoration: InputDecoration(
                     labelText: 'Nome da Categoria',
-                    labelStyle: TextStyle(
-                        color:
-                            Colors.lightBlueAccent), // Cor do texto do rótulo
+                    labelStyle: const TextStyle(color: Colors.lightBlueAccent),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Colors.lightBlueAccent, // Azul claro para borda
+                      borderSide: const BorderSide(
+                        color: Colors.lightBlueAccent,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color:
-                            Colors.lightBlueAccent, // Azul claro quando focado
+                      borderSide: const BorderSide(
+                        color: Colors.lightBlueAccent,
                       ),
                     ),
                   ),
@@ -94,8 +92,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
                         final newCategory = Category(
                           id: category?.id ?? '',
                           name: name,
@@ -106,16 +104,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           await categoryService.updateCategory(newCategory);
                         }
                         _refreshCategories();
+                        // ignore: use_build_context_synchronously
                         Navigator.pop(context);
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.lightBlueAccent, // Azul claro para o botão
+                      backgroundColor: Colors.lightBlueAccent,
                     ),
                     child: const Text(
                       'Salvar',
-                      style: TextStyle(color: Colors.white), // Texto em branco
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -145,8 +143,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
           } else if (snapshot.hasError) {
             return const Center(
               child: Text(
-                'Erro ao carregar categorias.',
-                style: TextStyle(color: Colors.red),
+                'Nenhuma categoria criada.',
+                style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
               ),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -194,7 +192,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCategoryModal(),
-        backgroundColor: Colors.lightBlueAccent, // Azul claro para o FAB
+        backgroundColor: Colors.lightBlueAccent,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );

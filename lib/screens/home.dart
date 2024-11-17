@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+
   // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -78,13 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
         primarySwatch: Colors.blue,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.lightBlueAccent, // Azul claro
+            backgroundColor: Colors.lightBlueAccent,
           ),
         ),
         checkboxTheme: CheckboxThemeData(
-          fillColor: MaterialStateProperty.all(
-              Colors.lightBlueAccent), // Azul claro para checkboxes
-          side: const BorderSide(color: Colors.white, width: 2), // Borda branca
+          fillColor: WidgetStateProperty.all(Colors.lightBlueAccent),
+          side: const BorderSide(color: Colors.white, width: 2),
         ),
         dialogTheme: DialogTheme(
           backgroundColor: Colors.white,
@@ -94,8 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       home: Scaffold(
-        resizeToAvoidBottomInset:
-            false, // Evita que o layout mude com o teclado
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text(
             'To-Do List',
@@ -157,15 +156,15 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Colors.lightBlueAccent), // Definindo a cor azul claro
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(Colors.lightBlueAccent),
                 ),
               );
             } else if (snapshot.hasError) {
               return const Center(
                 child: Text(
-                  'Erro ao carregar tarefas.',
-                  style: TextStyle(color: Colors.red),
+                  'Nenhuma tarefa foi criada.',
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
                 ),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -203,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: isDueSoon ? Colors.red : Colors.black,
                           decoration: task.isCompleted
                               ? TextDecoration.lineThrough
-                              : null, // Risca o texto se a tarefa for concluída
+                              : null,
                         ),
                       ),
                       subtitle: Column(
@@ -243,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Checkbox(
                             value: task.isCompleted,
-                            activeColor: Colors.lightBlueAccent, // Azul claro
+                            activeColor: Colors.lightBlueAccent,
                             onChanged: (bool? value) async {
                               setState(() {
                                 task.isCompleted = value ?? false;
