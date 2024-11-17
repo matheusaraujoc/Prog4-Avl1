@@ -1,3 +1,4 @@
+import 'package:app_tarefas/screens/category.dart';
 import 'package:flutter/material.dart';
 import '../screens/task_form.dart';
 import '../services/firebase_service.dart';
@@ -113,6 +114,16 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
           ),
+          // Adicionando o botão de navegação para a tela de categorias
+          IconButton(
+            icon: const Icon(Icons.category, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CategoryScreen()),
+              );
+            },
+          ),
         ],
       ),
       body: FutureBuilder<List<Task>>(
@@ -140,72 +151,91 @@ class _HomeScreenState extends State<HomeScreen> {
                   task.category == selectedCategory;
             }).toList();
             return ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: filteredTasks.length,
-              itemBuilder: (context, index) {
-                final task = filteredTasks[index];
-                final isDueSoon =
-                    task.dueDate.difference(DateTime.now()).inDays <= 1;
+  padding: const EdgeInsets.all(8),
+  itemCount: filteredTasks.length,
+  itemBuilder: (context, index) {
+    final task = filteredTasks[index];
+    final isDueSoon =
+        task.dueDate.difference(DateTime.now()).inDays <= 1;
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.all(12),
-                    title: Text(
-                      task.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isDueSoon ? Colors.red : Colors.black,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4),
-                        Text(
-                          task.description.isNotEmpty
-                              ? task.description
-                              : 'Sem descrição',
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today,
-                                size: 16, color: Colors.lightBlue),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${task.dueDate.toLocal()}".split(' ')[0],
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            const SizedBox(width: 16),
-                            const Icon(Icons.access_time,
-                                size: 16, color: Colors.lightBlue),
-                            const SizedBox(width: 4),
-                            Text(
-                              "${task.dueDate.hour.toString().padLeft(2, '0')}:${task.dueDate.minute.toString().padLeft(2, '0')}",
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () async {
-                        await firebaseService.deleteTask(task.id);
-                        fetchTasks();
-                      },
-                    ),
-                    onTap: () => _openTaskForm(task: task),
-                  ),
-                );
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12),
+        title: Text(
+          task.title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: isDueSoon ? Colors.red : Colors.black,
+            decoration:
+                task.isCompleted ? TextDecoration.lineThrough : null,  // Risca o texto se a tarefa for concluída
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              task.description.isNotEmpty
+                  ? task.description
+                  : 'Sem descrição',
+              style: const TextStyle(color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.calendar_today,
+                    size: 16, color: Colors.lightBlue),
+                const SizedBox(width: 4),
+                Text(
+                  "${task.dueDate.toLocal()}".split(' ')[0],
+                  style: const TextStyle(color: Colors.black),
+                ),
+                const SizedBox(width: 16),
+                const Icon(Icons.access_time,
+                    size: 16, color: Colors.lightBlue),
+                const SizedBox(width: 4),
+                Text(
+                  "${task.dueDate.hour.toString().padLeft(2, '0')}:${task.dueDate.minute.toString().padLeft(2, '0')}",
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Checkbox para marcar a tarefa como concluída
+            Checkbox(
+              value: task.isCompleted,
+              onChanged: (bool? value) async {
+                setState(() {
+                  task.isCompleted = value ?? false;  // Atualiza o estado da tarefa
+                });
+                await firebaseService.updateTask(task);  // Atualiza a tarefa no Firebase
               },
-            );
+            ),
+            // Ícone de excluir
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () async {
+                await firebaseService.deleteTask(task.id);
+                fetchTasks();
+              },
+            ),
+          ],
+        ),
+        onTap: () => _openTaskForm(task: task),
+      ),
+    );
+  },
+);
+
           }
         },
       ),
