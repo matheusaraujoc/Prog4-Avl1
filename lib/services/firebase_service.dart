@@ -4,7 +4,7 @@ import '../models/task.dart';
 
 class FirebaseService {
   static const String baseUrl =
-      'https://todo-prog4-default-rtdb.firebaseio.com';
+      'https://prog4-2-default-rtdb.firebaseio.com/';
 
   Future<List<Task>> fetchTasks() async {
     final response = await http.get(Uri.parse('$baseUrl/tasks.json'));

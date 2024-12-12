@@ -4,7 +4,7 @@ import '../models/category.dart';
 
 class CategoryService {
   static const String baseUrl =
-      'https://todo-prog4-default-rtdb.firebaseio.com';
+      'https://prog4-2-default-rtdb.firebaseio.com/';
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(Uri.parse('$baseUrl/categories.json'));
